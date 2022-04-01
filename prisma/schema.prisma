@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model customers {
+  ID        Int      @id @default(autoincrement())
+  Title     String?  @db.VarChar(255)
+  FirstName String?  @db.VarChar(255)
+  LastName  String?  @db.VarChar(255)
+  Phone     String?  @db.VarChar(255)
+  Street    String?  @db.VarChar(255)
+  City      String?  @db.VarChar(255)
+  ZIPCode   String?  @db.VarChar(255)
+  Misc      String?  @db.VarChar(255)
+  events    events[]
+}
+
+model events {
+  ID         Int        @id @default(autoincrement())
+  ZIP        String?    @db.VarChar(255)
+  Address    String?    @db.VarChar(255)
+  Eventname  String?    @db.VarChar(255)
+  Date       DateTime?  @db.Date
+  CustomerID Int?
+  customers  customers? @relation(fields: [CustomerID], references: [ID], onDelete: Restrict, onUpdate: Restrict, map: "events_ibfk_1")
+  products   products[]
+
+  @@index([CustomerID], map: "CustomerID")
+}
+
+model products {
+  ID          Int     @id @default(autoincrement())
+  Name        String? @db.VarChar(255)
+  Category    String? @db.VarChar(255)
+  Description String? @db.VarChar(255)
+  EventID     Int?
+  Misc        String? @db.VarChar(255)
+  Status      String? @db.VarChar(255)
+  events      events? @relation(fields: [EventID], references: [ID], onDelete: Restrict, onUpdate: Restrict, map: "products_ibfk_1")
+
+  @@index([EventID], map: "EventID")
+}
